@@ -1,6 +1,8 @@
 import customtkinter as ctk
+
 from PIL import Image
 from button import Button
+from frames import *
 
 class Navigator(ctk.CTkFrame):
     def __init__(self, master):
@@ -19,10 +21,10 @@ class Navigator(ctk.CTkFrame):
         self.logo.grid(row=0, column=0, padx=0, pady=(15, 15))
 
         buttons = [
-            (1, 'Scene', 'Category', (0, 15), lambda: self._cmd('Scene')),
-            (2, 'Analytics', 'Chart', (0, 15), lambda: self._cmd('Analytics')),
-            (3, 'Logs', 'Document', (0, 15), lambda: self._cmd('Logs')),
-            (4, 'Settings', 'Setting', 0, lambda: self._cmd('Settings')),
+            (1, 'Scene', 'Category', (0, 15), lambda: self._open_page('Scene', SceneFrame(master=self.master.mainframe))),
+            (2, 'Analytics', 'Chart', (0, 15), lambda: self._open_page('Analytics', AnalyticsFrame(master=self.master.mainframe))),
+            (3, 'Logs', 'Document', (0, 15), lambda: self._open_page('Logs', LogsFrame(master=self.master.mainframe))),
+            (4, 'Settings', 'Setting', 0, lambda: self._open_page('Settings', SettingsFrame(master=self.master.mainframe))),
             (6, 'Quit', 'Logout', (0, 15), self._quit)
         ]
 
@@ -42,9 +44,9 @@ class Navigator(ctk.CTkFrame):
             if name == 'Scene':
                 btn.activate()
 
-    def _cmd(self, name):
-        self.master.mainframe.navigator._change_text()
-        print(name)
+    def _open_page(self, name, frame):
+        self.master.mainframe.navigator._change_page()
+        self.master.mainframe._switch_frame(frame)
 
     def _quit(self):
         self.master.destroy()
