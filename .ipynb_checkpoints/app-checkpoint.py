@@ -1,6 +1,9 @@
 import customtkinter as ctk
 from navigator import Navigator
 from mainframe import MainFrame
+from loggen import LogsCreator
+
+import os
 
 class App(ctk.CTk):
     def __init__(self):
@@ -31,9 +34,15 @@ class App(ctk.CTk):
         self.configure(fg_color="#FAFAFB")
         
         ctk.set_appearance_mode("Light")
+
+        self.logs = LogsCreator()
+
+        if os.path.exists('settings.json'):
+            os.remove('settings.json')
     
     def _set_frame(self):
         self.navigator = Navigator(self)
         self.navigator.grid(row=0, column=0, padx=15, pady=15, sticky="nsew")
+
         self.mainframe = MainFrame(self)
         self.mainframe.grid(row=0, column=1, padx=(0, 15), pady=15, sticky="nsew")

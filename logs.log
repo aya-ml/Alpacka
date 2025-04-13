@@ -1,0 +1,9 @@
+[2025-04-14 01:23:29] Session started
+[2025-04-14 01:23:39] Settings changed:
+algorithm: SFM → Neural Network
+fps: 15 → 25
+cam_mode: Auto → Manual
+[2025-04-14 01:23:44] Settings changed:
+algorithm: Neural Network → SFM
+fps: 25 → 15
+cam_mode: Manual → Auto

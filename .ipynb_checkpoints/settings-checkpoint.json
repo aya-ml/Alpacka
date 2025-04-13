@@ -1,0 +1,8 @@
+{
+  "algorithm": "Neural Network",
+  "fps": 60,
+  "cam_mode": "Manual",
+  "width": 1920,
+  "height": 1080,
+  "focal": 10
+}

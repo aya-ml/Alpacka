@@ -1,0 +1,8 @@
+{
+  "algorithm": "SFM",
+  "fps": 15,
+  "cam_mode": "Auto",
+  "width": 1920,
+  "height": 1080,
+  "focal": 1000
+}
