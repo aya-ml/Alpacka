@@ -99,6 +99,7 @@ class ButtonFrame(ctk.CTkFrame):
             img="assets/default/Stop.png" if self._is_playing else "assets/default/Play.png",
             hover_img="assets/hover/Stop.png" if self._is_playing else "assets/hover/Play.png"
         )
+        self.master.master.curr_frame.start_simulation() if self._is_playing else self.master.master.curr_frame.stop_simulation()
 
     def _set_mode(self):
         self._is_video = not self._is_video

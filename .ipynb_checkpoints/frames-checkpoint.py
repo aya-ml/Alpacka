@@ -2,14 +2,23 @@ import customtkinter as ctk
 from button import Button
 from loggen import LogsCreator
 
+from simulation import RobotSimulator
+from PIL import Image, ImageTk
+
 import json
 import os
+import cv2
+import numpy as np
 
 class SceneFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
-        
+        self.simulator = RobotSimulator()
         self._setup()
+        self.after_id = None
+        
+        # Сразу подключаемся и инициализируем камеру
+        self._initialize_simulation()
 
     def _setup(self):
         self.grid_columnconfigure(0, weight=1)
@@ -17,19 +26,63 @@ class SceneFrame(ctk.CTkFrame):
         
         self.font = ("Teachers", 20)
         self.text_color = "#030229"
-        
         self.configure(fg_color='#FFFFFF', corner_radius=10)
         
-        self.curr_label = ctk.CTkLabel(
+        # Виджет для отображения видео
+        self.video_label = ctk.CTkLabel(
             self,
-            text="There will be video...",
-            width=200,
-            height=40,
-            font=self.font,
-            text_color=self.text_color,
-            anchor="w"
+            text="",
+            width=640,
+            height=480
         )
-        self.curr_label.grid(row=0, column=0, padx=0)
+        self.video_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        
+        # Начинаем обновление видео
+        self._update_video()
+
+    def _initialize_simulation(self):
+        """Инициализация симуляции (без запуска движения)"""
+        if self.simulator.connect() and self.simulator.initialize_robot():
+            # Получаем первый кадр с камеры
+            self.simulator._get_camera_image()
+
+    def start_simulation(self):
+        """Запуск симуляции и движения робота"""
+        if not self.simulator.is_running():
+            self.simulator.start_simulation()
+            return True
+        return False
+
+    def stop_simulation(self):
+        """Остановка симуляции"""
+        if self.simulator.is_running():
+            self.simulator.stop_simulation()
+            if self.after_id:
+                self.after_cancel(self.after_id)
+
+    def _update_video(self):
+        """Обновление изображения с камеры"""
+        frame = self.simulator.get_frame()
+        
+        # Конвертируем кадр для отображения в CTk
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        img_pil = Image.fromarray(img)
+        img_tk = ctk.CTkImage(light_image=img_pil, size=(640, 480))
+        
+        # Обновляем изображение
+        self.video_label.configure(image=img_tk)
+        self.video_label.image = img_tk
+        
+        # Планируем следующее обновление
+        self.after_id = self.after(50, self._update_video)
+
+    def is_simulation_running(self):
+        """Проверка состояния симуляции"""
+        return self.simulator.is_running()
+
+    def cleanup(self):
+        """Очистка ресурсов при закрытии окна"""
+        self.stop_simulation()
 
 class AnalyticsFrame(ctk.CTkFrame):
     def __init__(self, master):
